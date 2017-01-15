@@ -2,10 +2,14 @@
 
 use WebEd\Base\Caching\Repositories\AbstractRepositoryCacheDecorator;
 
+use WebEd\Base\Caching\Repositories\Cache\UseSoftDeletesCache;
+use WebEd\Base\Core\Repositories\Contracts\UseSoftDeletesContract;
 use WebEd\Plugins\Ecommerce\Addons\Customers\Repositories\Contracts\CustomerRepositoryContract;
 
-class CustomerRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator  implements CustomerRepositoryContract
+class CustomerRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator  implements CustomerRepositoryContract, UseSoftDeletesContract
 {
+    use UseSoftDeletesCache;
+
     /**
      * @param array $data
      * @return array

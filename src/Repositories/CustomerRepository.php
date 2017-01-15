@@ -3,10 +3,14 @@
 use WebEd\Base\Core\Repositories\AbstractBaseRepository;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 
+use WebEd\Base\Core\Repositories\Contracts\UseSoftDeletesContract;
+use WebEd\Base\Core\Repositories\Traits\UseSoftDeletes;
 use WebEd\Plugins\Ecommerce\Addons\Customers\Repositories\Contracts\CustomerRepositoryContract;
 
-class CustomerRepository extends AbstractBaseRepository implements CustomerRepositoryContract, CacheableContract
+class CustomerRepository extends AbstractBaseRepository implements CustomerRepositoryContract, CacheableContract, UseSoftDeletesContract
 {
+    use UseSoftDeletes;
+
     protected $rules = [
         'username' => 'required|between:3,100|string|unique:users|alpha_dash',
         'email' => 'required|between:5,255|email|unique:users',
