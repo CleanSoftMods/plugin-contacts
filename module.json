@@ -1,0 +1,9 @@
+{
+    "alias": "webed-ecommerce-customers",
+    "name": "WebEd customers for Ecommerce package",
+    "author": "Tedozi Manson",
+    "description": "WebEd customers for Ecommerce package",
+    "namespace": "WebEd\\Plugins\\Ecommerce\\Addons\\Customers",
+    "version": "1.0",
+    "autoload": "psr-4"
+}
