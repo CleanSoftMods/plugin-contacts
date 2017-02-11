@@ -1,12 +1,12 @@
 <?php namespace WebEd\Plugins\Ecommerce\Addons\Customers\Repositories;
 
-use WebEd\Base\Caching\Repositories\AbstractRepositoryCacheDecorator;
+use WebEd\Base\Caching\Repositories\Eloquent\EloquentBaseRepositoryCacheDecorator;
 
 use WebEd\Base\Caching\Repositories\Cache\UseSoftDeletesCache;
 use WebEd\Base\Core\Repositories\Contracts\UseSoftDeletesContract;
 use WebEd\Plugins\Ecommerce\Addons\Customers\Repositories\Contracts\CustomerRepositoryContract;
 
-class CustomerRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator  implements CustomerRepositoryContract, UseSoftDeletesContract
+class CustomerRepositoryCacheDecorator extends EloquentBaseRepositoryCacheDecorator  implements CustomerRepositoryContract, UseSoftDeletesContract
 {
     use UseSoftDeletesCache;
 

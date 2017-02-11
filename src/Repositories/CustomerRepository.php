@@ -1,36 +1,34 @@
 <?php namespace WebEd\Plugins\Ecommerce\Addons\Customers\Repositories;
 
-use WebEd\Base\Core\Repositories\AbstractBaseRepository;
+use WebEd\Base\Caching\Services\Traits\Cacheable;
+use WebEd\Base\Core\Repositories\Eloquent\EloquentBaseRepository;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 
-use WebEd\Base\Core\Repositories\Contracts\UseSoftDeletesContract;
-use WebEd\Base\Core\Repositories\Traits\UseSoftDeletes;
 use WebEd\Plugins\Ecommerce\Addons\Customers\Repositories\Contracts\CustomerRepositoryContract;
 
-class CustomerRepository extends AbstractBaseRepository implements CustomerRepositoryContract, CacheableContract, UseSoftDeletesContract
+class CustomerRepository extends EloquentBaseRepository implements CustomerRepositoryContract, CacheableContract
 {
-    use UseSoftDeletes;
+    use Cacheable;
 
     protected $rules = [
         'username' => 'required|between:3,100|string|unique:users|alpha_dash',
         'email' => 'required|between:5,255|email|unique:users',
-        'password' => 'required|max:60|min:5|string',
+        'password' => 'required',
         'status' => 'string|required|in:activated,disabled,deleted',
-        'display_name' => 'string|between:1,150',
+        'display_name' => 'string|between:1,150|nullable',
         'first_name' => 'string|between:1,100|required',
-        'last_name' => 'string|between:1,100',
-        'avatar' => 'string|between:1,150',
-        'phone' => 'string|max:20',
-        'mobile_phone' => 'string|max:20',
+        'last_name' => 'string|between:1,100|required',
+        'avatar' => 'string|nullable',
+        'phone' => 'string|max:20|nullable',
+        'mobile_phone' => 'string|max:20|nullable',
         'sex' => 'string|required|in:male,female,other',
         'birthday' => 'date_multi_format:Y-m-d H:i:s,Y-m-d|nullable',
-        'description' => 'string|max:1000',
+        'description' => 'string|max:1000|nullable',
         'created_by' => 'integer|required|min:0',
-        'updated_by' => 'integer|min:0',
-        'last_login_at' => 'string|date_format:Y-m-d H:i:s',
-        'last_activity_at' => 'string|date_format:Y-m-d H:i:s',
-        'disabled_until' => 'string|date_format:Y-m-d H:i:s',
-        'deleted_at' => 'string|date_format:Y-m-d H:i:s',
+        'updated_by' => 'integer|min:0|required',
+        'last_login_at' => 'string|date_format:Y-m-d H:i:s|nullable',
+        'last_activity_at' => 'string|date_format:Y-m-d H:i:s|nullable',
+        'disabled_until' => 'string|date_format:Y-m-d H:i:s|nullable',
     ];
 
     protected $editableFields = [
@@ -52,7 +50,6 @@ class CustomerRepository extends AbstractBaseRepository implements CustomerRepos
         'last_login_at',
         'last_activity_at',
         'disabled_until',
-        'deleted_at',
     ];
 
     /**
@@ -64,11 +61,11 @@ class CustomerRepository extends AbstractBaseRepository implements CustomerRepos
         $resultEditObject = $this->editWithValidate(0, $data, true, false);
 
         if ($resultEditObject['error']) {
-            return $this->setMessages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
+            return response_with_messages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
         }
         $object = $resultEditObject['data'];
 
-        $result = $this->setMessages('Customer created successfully', false, \Constants::SUCCESS_CODE, $object);
+        $result = response_with_messages('Customer created successfully', false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
     }
@@ -83,11 +80,11 @@ class CustomerRepository extends AbstractBaseRepository implements CustomerRepos
         $resultEditObject = $this->editWithValidate($id, $data, false, true);
 
         if ($resultEditObject['error']) {
-            return $this->setMessages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
+            return response_with_messages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
         }
         $object = $resultEditObject['data'];
 
-        $result = $this->setMessages('Customer updated successfully', false, \Constants::SUCCESS_CODE, $object);
+        $result = response_with_messages('Customer updated successfully', false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
     }

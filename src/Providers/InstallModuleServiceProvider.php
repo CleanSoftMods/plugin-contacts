@@ -50,10 +50,10 @@ class InstallModuleServiceProvider extends ServiceProvider
             $table->increments('id');
             $table->string('username', 100)->unique();
             $table->string('email', 255)->unique();
-            $table->string('password', 60);
-            $table->string('display_name', 150);
+            $table->string('password');
+            $table->string('display_name', 150)->nullable();
             $table->string('first_name', 100);
-            $table->string('last_name', 100)->nullable();
+            $table->string('last_name', 100);
             $table->string('activation_code', 100)->nullable();
             $table->string('avatar', 255)->nullable();
             $table->string('phone', 20)->nullable();
@@ -68,7 +68,6 @@ class InstallModuleServiceProvider extends ServiceProvider
             $table->timestamp('last_login_at')->nullable();
             $table->timestamp('last_activity_at')->nullable();
             $table->timestamp('disabled_until')->nullable();
-            $table->softDeletes();
             $table->timestamps();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');

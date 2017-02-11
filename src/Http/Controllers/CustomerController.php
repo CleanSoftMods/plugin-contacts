@@ -25,7 +25,7 @@ class CustomerController extends BaseAdminController
     {
         parent::__construct();
 
-        $this->repository = $customerRepository->withTrashed();
+        $this->repository = $customerRepository;
         $this->breadcrumbs->addLink('Customers', route('admin::ecommerce.customers.index.get'));
 
         $this->getDashboardMenu($this->module);
@@ -56,7 +56,7 @@ class CustomerController extends BaseAdminController
      * Handle group actions
      * @return array
      */
-    private function groupAction()
+    protected function groupAction()
     {
         $data = [];
         if ($this->request->get('customActionType', null) == 'group_action') {
@@ -254,18 +254,6 @@ class CustomerController extends BaseAdminController
     public function deleteDelete($id)
     {
         $result = $this->repository->delete($id);
-        return response()->json($result, $result['response_code']);
-    }
-
-    public function deleteForceDelete($id)
-    {
-        $result = $this->repository->forceDelete($id);
-        return response()->json($result, $result['response_code']);
-    }
-
-    public function postRestore($id)
-    {
-        $result = $this->repository->restore($id);
         return response()->json($result, $result['response_code']);
     }
 }

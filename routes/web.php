@@ -1,10 +1,6 @@
-<?php use Illuminate\Routing\Router;
-
-/**
- *
- * @var Router $router
- *
- */
+<?php
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Admin routes
@@ -14,7 +10,7 @@ $adminRoute = config('webed.admin_route');
 
 $moduleRoute = 'ecommerce/customers';
 
-$router->group(['prefix' => $adminRoute . '/' . $moduleRoute], function (Router $router) use ($adminRoute, $moduleRoute) {
+Route::group(['prefix' => $adminRoute . '/' . $moduleRoute], function (Router $router) use ($adminRoute, $moduleRoute) {
     $router->get('/', 'CustomerController@getIndex')
         ->name('admin::ecommerce.customers.index.get')
         ->middleware('has-permission:view-customers');
@@ -54,8 +50,4 @@ $router->group(['prefix' => $adminRoute . '/' . $moduleRoute], function (Router 
     $router->delete('delete/{id}', 'CustomerController@deleteDelete')
         ->name('admin::ecommerce.customers.delete.delete')
         ->middleware('has-permission:delete-customers');
-
-    $router->delete('force-delete/{id}', 'CustomerController@deleteForceDelete')
-        ->name('admin::ecommerce.customers.force-delete.delete')
-        ->middleware('has-permission:force-delete-customers');
 });

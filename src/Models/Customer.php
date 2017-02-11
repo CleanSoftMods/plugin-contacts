@@ -5,7 +5,6 @@ use WebEd\Base\Core\Models\EloquentBase as BaseModel;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
@@ -14,8 +13,6 @@ class Customer extends BaseModel implements CustomerModelContract, Authenticatab
     use Authenticatable;
 
     use CanResetPassword;
-
-    use SoftDeletes;
 
     protected $table = 'customers';
 

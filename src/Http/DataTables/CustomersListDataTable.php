@@ -3,28 +3,24 @@
 use Illuminate\Database\Eloquent\SoftDeletes;
 use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
 use WebEd\Base\Core\Models\EloquentBase;
-use WebEd\Plugins\Ecommerce\Addons\Customers\Repositories\Contracts\CustomerRepositoryContract;
+use WebEd\Plugins\Ecommerce\Addons\Customers\Models\Customer;
 use WebEd\Plugins\Ecommerce\Addons\Customers\Repositories\CustomerRepository;
 
 class CustomersListDataTable extends AbstractDataTables
 {
     /**
-     * @var CustomerRepository
+     * @var Customer
      */
-    protected $repository;
+    protected $model;
 
     /**
      * @var array|\Illuminate\Http\Request|string
      */
     protected $request;
 
-    public function __construct(CustomerRepositoryContract $repository)
+    public function __construct()
     {
-        $this->repository = $repository;
-
-        $this->repository
-            ->select('id', 'created_at', 'avatar', 'username', 'email', 'status', 'sex', 'deleted_at')
-            ->withTrashed();
+        $this->model = Customer::select('id', 'created_at', 'avatar', 'username', 'email', 'status', 'sex', 'deleted_at');
 
         parent::__construct();
 
@@ -87,17 +83,7 @@ class CustomersListDataTable extends AbstractDataTables
      */
     protected function fetch()
     {
-        $this->fetch = datatable()->of($this->repository)
-            ->filterColumn('status', function ($query, $keyword) {
-                /**
-                 * @var CustomerRepository $query
-                 */
-                if ($keyword === 'deleted') {
-                    return $query->onlyTrashed();
-                } else {
-                    return $query->where('status', '=', $keyword);
-                }
-            })
+        $this->fetch = datatable()->of($this->model)
             ->editColumn('avatar', function ($item) {
                 return '<img src="' . get_image($item->avatar) . '" width="50" height="50">';
             })
@@ -105,12 +91,6 @@ class CustomersListDataTable extends AbstractDataTables
                 return form()->customCheckbox([['id[]', $item->id]]);
             })
             ->editColumn('status', function ($item) {
-                /**
-                 * @var SoftDeletes|EloquentBase $item
-                 */
-                if ($item->trashed()) {
-                    return html()->label('deleted', 'deleted');
-                }
                 return html()->label($item->status, $item->status);
             })
             ->addColumn('actions', function ($item) {
@@ -118,44 +98,30 @@ class CustomersListDataTable extends AbstractDataTables
                 $activeLink = route('admin::ecommerce.customers.update-status.post', ['id' => $item->id, 'status' => 'activated']);
                 $disableLink = route('admin::ecommerce.customers.update-status.post', ['id' => $item->id, 'status' => 'disabled']);
                 $deleteLink = route('admin::ecommerce.customers.delete.delete', ['id' => $item->id]);
-                $forceDelete = route('admin::ecommerce.customers.force-delete.delete', ['id' => $item->id]);
-                $restoreLink = route('admin::ecommerce.customers.restore.post', ['id' => $item->id]);
 
                 /*Buttons*/
                 $editBtn = link_to(route('admin::ecommerce.customers.edit.get', ['id' => $item->id]), 'Edit', ['class' => 'btn btn-outline green btn-sm']);
-                $activeBtn = ($item->status != 'activated' && !$item->trashed()) ? form()->button('Active', [
+                $activeBtn = ($item->status != 'activated') ? form()->button('Active', [
                     'title' => 'Active this item',
                     'data-ajax' => $activeLink,
                     'data-method' => 'POST',
                     'data-toggle' => 'confirmation',
                     'class' => 'btn btn-outline blue btn-sm ajax-link',
                 ]) : '';
-                $disableBtn = ($item->status != 'disabled' && !$item->trashed()) ? form()->button('Disable', [
+                $disableBtn = ($item->status != 'disabled') ? form()->button('Disable', [
                     'title' => 'Disable this item',
                     'data-ajax' => $disableLink,
                     'data-method' => 'POST',
                     'data-toggle' => 'confirmation',
                     'class' => 'btn btn-outline yellow-lemon btn-sm ajax-link',
                 ]) : '';
-                $deleteBtn = (!$item->trashed()) ? form()->button('Delete', [
+                $deleteBtn = form()->button('Delete', [
                     'title' => 'Delete this item',
                     'data-ajax' => $deleteLink,
                     'data-method' => 'DELETE',
                     'data-toggle' => 'confirmation',
                     'class' => 'btn btn-outline red-sunglo btn-sm ajax-link',
-                ]) : form()->button('Force delete', [
-                        'title' => 'Force delete this item',
-                        'data-ajax' => $forceDelete,
-                        'data-method' => 'DELETE',
-                        'data-toggle' => 'confirmation',
-                        'class' => 'btn btn-outline red-sunglo btn-sm ajax-link',
-                    ]) . form()->button('Restore', [
-                        'title' => 'Restore this item',
-                        'data-ajax' => $restoreLink,
-                        'data-method' => 'POST',
-                        'data-toggle' => 'confirmation',
-                        'class' => 'btn btn-outline blue btn-sm ajax-link',
-                    ]);
+                ]);
 
                 $activeBtn = ($item->status != 'activated') ? $activeBtn : '';
                 $disableBtn = ($item->status != 'disabled') ? $disableBtn : '';
