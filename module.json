@@ -4,6 +4,6 @@
     "author": "Tedozi Manson",
     "description": "WebEd customers for Ecommerce package",
     "namespace": "WebEd\\Plugins\\Ecommerce\\Addons\\Customers",
-    "version": "3.0",
+    "version": "3.0.1",
     "autoload": "psr-4"
 }

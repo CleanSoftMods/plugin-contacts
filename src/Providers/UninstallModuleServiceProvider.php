@@ -40,6 +40,7 @@ class UninstallModuleServiceProvider extends ServiceProvider
 
     private function dropSchema()
     {
-        //\Schema::dropIfExists('table-name');
+        \Schema::dropIfExists('customers');
+        \Schema::dropIfExists('customer_password_resets');
     }
 }
